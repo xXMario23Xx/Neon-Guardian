@@ -44,8 +44,8 @@
 </head>
 <body>
     <div id="root"></div>
-    <!-- Punto de entrada para el código -->
-    <script type="module" src="./index.tsx"></script>
+    <!-- Vite inyectará el script compilado aquí -->
+    <script type="module" src="/index.tsx"></script>
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -55,6 +55,5 @@
         });
       }
     </script>
-<script type="module" src="/index.tsx"></script>
 </body>
 </html>
