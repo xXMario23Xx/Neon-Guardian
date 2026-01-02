@@ -3,8 +3,16 @@ import { GoogleGenAI } from "@google/genai";
 import { GameState, TowerInstance } from "./types";
 import { TOWERS } from "./constants";
 
-// Initialize GoogleGenAI with the API key
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Safe check for API KEY to prevent browser crash
+const getApiKey = () => {
+  try {
+    return process.env.API_KEY || "";
+  } catch (e) {
+    return "";
+  }
+};
+
+const ai = new GoogleGenAI({ apiKey: getApiKey() });
 
 const LOCAL_ADVICE = [
   "¡Construye más torres de área para grupos grandes!",
@@ -17,8 +25,10 @@ const LOCAL_ADVICE = [
 ];
 
 export async function getTacticalAdvice(gameState: GameState, towers: TowerInstance[]) {
-  // Check if user is offline
-  if (!navigator.onLine) {
+  const apiKey = getApiKey();
+  
+  // Si no hay API KEY o estamos offline, usar consejos locales
+  if (!apiKey || !navigator.onLine) {
     return LOCAL_ADVICE[Math.floor(Math.random() * LOCAL_ADVICE.length)];
   }
 
