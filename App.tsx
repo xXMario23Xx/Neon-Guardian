@@ -20,10 +20,8 @@ const App: React.FC = () => {
 
   const [selectedTowerType, setSelectedTowerType] = useState<TowerType | null>(null);
   const [selectedInstanceId, setSelectedInstanceId] = useState<string | null>(null);
-  const [useIconStyle, setUseIconStyle] = useState<boolean>(true);
   const [advice, setAdvice] = useState<string>("Comandante, establezca perímetros.");
   const [isAdviceLoading, setIsAdviceLoading] = useState(false);
-  const [hoveredTowerId, setHoveredTowerId] = useState<string | null>(null);
 
   const gameStateRef = useRef(gameState);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -37,6 +35,10 @@ const App: React.FC = () => {
   const selectedInst = towersRef.current.find(t => t.id === selectedInstanceId);
 
   useEffect(() => {
+    // Quitar la pantalla de carga del HTML una vez que React carga
+    const loader = document.getElementById('loading-screen');
+    if (loader) loader.style.display = 'none';
+
     gameStateRef.current = gameState;
   }, [gameState]);
 
@@ -324,17 +326,14 @@ const App: React.FC = () => {
 
   return (
     <div className="flex flex-col lg:flex-row h-screen w-screen overflow-hidden bg-slate-950 text-slate-100 font-sans mobile-landscape-fix">
-      
-      {/* Mobile Control Strip - PLACED FIRST FOR LANDSCAPE LEFT ALIGNMENT */}
+      {/* Mobile Control Strip */}
       <div className="mobile-arsenal-container lg:hidden z-20">
         <div className="flex h-full lg:flex-row flex-col bg-slate-900/95 border-r border-slate-800 p-2 gap-2">
-          {/* Static Top Part (Wave Button) in landscape */}
           <button onClick={spawnWave} disabled={waveInProgressRef.current || gameState.isGameOver} 
             className="mobile-wave-btn w-full py-3 bg-gradient-to-br from-blue-700 to-indigo-800 rounded-xl font-bold text-[10px] shadow-lg active:scale-95 transition-all shrink-0">
             {waveInProgressRef.current ? <i className="fa-solid fa-sync fa-spin"></i> : "OLA"}
           </button>
           
-          {/* Scrollable Center Part (Towers) */}
           <div className="flex lg:flex-col gap-2 flex-1 overflow-x-auto lg:overflow-y-auto no-scrollbar scroll-smooth">
             {Object.values(TOWERS).map(tower => {
               const isLocked = gameState.wave < tower.unlockWave;
@@ -352,7 +351,7 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* HUD - Flotante */}
+      {/* HUD */}
       <div className="lg:hidden absolute top-0 left-0 w-full p-2 flex justify-between items-center z-30 pointer-events-none">
         <div className="flex gap-2 pointer-events-auto ml-20 lg:ml-0 landscape:ml-24">
           <div className="bg-slate-900/80 backdrop-blur px-3 py-1 rounded-full border border-slate-700 shadow-xl">
@@ -444,54 +443,19 @@ const App: React.FC = () => {
       </div>
 
       <style>{`
-        /* Portrait Mobile (default for small screens) */
         @media (max-width: 1024px) {
-           .mobile-arsenal-container {
-              width: 100%;
-              border-top: 1px solid #1e293b;
-           }
-           .mobile-arsenal-container .flex-col {
-              flex-direction: column !important;
-           }
-           .mobile-arsenal-container .flex-row {
-              flex-direction: row !important;
-           }
-           /* Hide desktop sidebar on mobile */
+           .mobile-arsenal-container { width: 100%; border-top: 1px solid #1e293b; }
+           .mobile-arsenal-container .flex-col { flex-direction: column !important; }
+           .mobile-arsenal-container .flex-row { flex-direction: row !important; }
            .lg\\:flex { display: none; }
         }
-
-        /* Landscape Mobile Specific Fix */
         @media (max-height: 500px) and (max-width: 1024px) {
-          .mobile-landscape-fix {
-            flex-direction: row !important;
-          }
-          .mobile-arsenal-container {
-            width: 80px !important;
-            height: 100% !important;
-            border-top: 0 !important;
-            border-right: 1px solid #1e293b !important;
-            order: -1 !important; /* Move to the left */
-          }
-          .mobile-arsenal-container > div {
-            flex-direction: column !important;
-            padding: 4px !important;
-          }
-          /* Wave button stays visible at the top or bottom */
-          .mobile-wave-btn {
-            order: 2 !important; /* Bottom position for wave button in landscape left strip */
-            margin-top: auto;
-          }
-          .mobile-arsenal-container .overflow-x-auto {
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-            flex-direction: column !important;
-            height: auto !important;
-            width: 100% !important;
-          }
-          .mobile-arsenal-container button {
-            width: 100% !important;
-            margin-bottom: 4px;
-          }
+          .mobile-landscape-fix { flex-direction: row !important; }
+          .mobile-arsenal-container { width: 80px !important; height: 100% !important; border-top: 0 !important; border-right: 1px solid #1e293b !important; order: -1 !important; }
+          .mobile-arsenal-container > div { flex-direction: column !important; padding: 4px !important; }
+          .mobile-wave-btn { order: 2 !important; margin-top: auto; }
+          .mobile-arsenal-container .overflow-x-auto { overflow-y: auto !important; overflow-x: hidden !important; flex-direction: column !important; height: auto !important; width: 100% !important; }
+          .mobile-arsenal-container button { width: 100% !important; margin-bottom: 4px; }
         }
       `}</style>
     </div>

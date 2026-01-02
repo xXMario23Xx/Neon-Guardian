@@ -3,10 +3,9 @@ import { GoogleGenAI } from "@google/genai";
 import { GameState, TowerInstance } from "./types";
 import { TOWERS } from "./constants";
 
-// Función ultra-segura para obtener la API KEY
 const getApiKey = () => {
   try {
-    // En Vite/Producción se inyecta diferente, esto evita que el código muera
+    // Vite usa import.meta.env para las variables de entorno
     return (import.meta as any).env?.VITE_API_KEY || "";
   } catch (e) {
     return "";
